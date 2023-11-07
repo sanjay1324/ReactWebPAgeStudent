@@ -1,0 +1,45 @@
+/* Header.css */
+.shop15fixedheader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%; /* Use 100% to ensure the full width */
+    background-color: #95753e;
+    color: #000000;
+    padding: 15px;
+    display: flex;
+    justify-content: space-evenly; /* Use space-between for even spacing */
+    align-items: center;
+}
+
+
+
+.shop15fixedheader .shop15search input {
+    padding: 8px;
+    border: none;
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #0c51e6;
+    width: 100%; /* Set it to 100% for full width */
+}
+
+.shop15fixedheader .shop15productlist,
+.shop15fixedheader .shop15contactus {
+    margin-left: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #fff;
+}
+
+.shop15fixedheader .shop15productlist:hover,
+.shop15fixedheader .shop15contactus:hover {
+    text-decoration: underline;
+}
+
+.shop15fixedheader .shop15productlist {
+    font-weight: bold;
+}
+
+.shop15fixedheader .shop15contactus {
+    font-weight: normal; /* Add a semicolon at the end for consistency */
+}
