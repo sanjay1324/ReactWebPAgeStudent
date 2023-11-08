@@ -18,6 +18,7 @@ import {
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+import Nav from './NavBar'
 
 const Topics = () => {
   const [data, setData] = useState([]);
@@ -158,7 +159,7 @@ const Topics = () => {
         toast.success('Topic Has been Updated Successfully');
       })
       .catch((error) => {
-        toast.error(error);
+        console.log(error);
       });
 
     handleClose();
@@ -203,7 +204,7 @@ const Topics = () => {
         // Handle the successful response
         const courseName = result.data;
         // Do something with the courseName, e.g., display it
-        console.log(`Course Name for Course ID ${courseId}: ${courseName}`);
+        // console.log(`Course Name for Course ID ${courseId}: ${courseName}`);
       })
       .catch((error) => {
         // Handle any errors when fetching the course name
@@ -231,6 +232,7 @@ const Topics = () => {
 
   return (
     <Fragment>
+      <Nav/>
       <ToastContainer />
       <Container>
         <Grid container spacing={2}>

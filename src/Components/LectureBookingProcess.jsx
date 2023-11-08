@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { List, ListItem, ListItemText, Button, Paper, Container, Typography } from '@mui/material';
 import  Navbar  from './NavBar';
+import { ToastContainer, toast } from 'react-toastify';
+
 function LectureBookingProcess() {
   const [venueBookings, setVenueBookings] = useState([]);
   const [enrollmentStatus, setEnrollmentStatus] = useState(false);
@@ -9,6 +11,8 @@ function LectureBookingProcess() {
 
   // Fetch all venue bookings from the server
   useEffect(() => {
+   
+
     axios.get('https://localhost:7003/api/VenueBookingProcesses')
       .then((response) => {
         const updatedVenueBookings = response.data.map(async (booking) => {
@@ -48,45 +52,81 @@ function LectureBookingProcess() {
       });
   }, []);
 
-
-  // Check if the user is enrolled in the course (pseudo-code)
-  // const username = localStorage.getItem('username');
-  // const topicId = 32;
-
-  // axios.get(`https://localhost:7003/api/UserEnrollment?username=${username}&topicId=${topicId}`)
-  //   .then((response) => {
-  //     if (response.data.isEnrolled) {
-  //       setEnrollmentStatus(true);
-  //     }
-  //   })
-  //   .catch((error) => {
-  //     console.error('Error checking enrollment status:', error);
-  //   });
-
-
-  const handleEnroll = (venueBookingId) => {
-    // Enroll the user in the lecture (pseudo-code)
-    const username = localStorage.getItem('username');
-    const lectureEnrollmentData = {
-      venueBookingId,
-      username,
-      enrollmentCount: 1,
-      attendance: false,
-    };
-    console.log(lectureEnrollmentData);
-
-    axios.post('https://localhost:7003/api/LectureEnrollments', lectureEnrollmentData)
-      .then(() => {
-        // Enrollment successful
-        setEnrollmentStatus(true);
+  const checkEnrollmentStatus = (username, courseId) => {
+    return axios.get(`https://localhost:7003/api/UserEnrollment?username=${username}&courseId=${courseId}`)
+      .then((response) => {
+        return response.data.isEnrolled;
       })
       .catch((error) => {
-        console.error('Error enrolling in the lecture:', error);
+        console.error('Error checking enrollment status:', error);
+        return false;
       });
   };
+  
+
+  const getNextExpectedLecture = (username, venueBookingId,lectureSeries) => {
+    return axios
+      .get(`https://localhost:7003/api/Attendance/LastAttendedLectureSeries?username=${username}&venueBookingId=${venueBookingId}`)
+      .then((response) => {
+        const expectedLecture = response.data;
+        console.log(expectedLecture)
+        console.log(lectureSeries)
+
+        if (expectedLecture === lectureSeries) {
+          // The student can attend the next lecture in sequence
+          return true;
+        } else {
+          // The student needs to attend the correct lecture in sequence
+          return false;
+        }
+      })
+      .catch((error) => {
+        console.error('Error getting next expected lecture:', error);
+        return false; // Return false in case of an error
+      });
+  };
+  
+
+
+const handleEnroll = async (venueBookingId,lectureSeries) => {
+  const username = localStorage.getItem('username');
+  const courseId = 16;
+  const lectureEnrollmentData = {
+    venueBookingId,
+    username,
+    enrollmentCount: 1,
+    attendance: true,
+  };
+
+  console.log(lectureEnrollmentData);
+
+  try {
+      // Check enrollment status
+      const isEnrolled = await checkEnrollmentStatus(username, courseId);
+      if (isEnrolled) {
+          // Check the next expected lecture
+          const nextExpectedLecture = await getNextExpectedLecture(username, venueBookingId,lectureSeries);
+          console.log(nextExpectedLecture)
+          if (nextExpectedLecture) {
+              // If both conditions pass, make the POST request
+              await axios.post('https://localhost:7003/api/LectureEnrollments', lectureEnrollmentData);
+              // Enrollment successful
+              setEnrollmentStatus(true);
+          } else {
+              toast.error('User must attend the correct lecture in sequence');
+          }
+      } else {
+          toast.error('User is not  enrolled in this course');
+      }
+  } catch (error) {
+      toast.error('Error enrolling in the lecture:', error);
+  }
+};
+
 
   return (
     <Container maxWidth="md">
+    <ToastContainer/>
       <Navbar />
 
       <Paper elevation={3}>
@@ -105,7 +145,7 @@ function LectureBookingProcess() {
               <ListItemText primary={`Lecture No: ${booking.lectureSeries}`} />
 
               {!enrollmentStatus ? (
-                <Button variant="contained" color="primary" onClick={() => handleEnroll(booking.venueBookingId)}>
+                <Button variant="contained" color="primary" onClick={() => handleEnroll(booking.venueBookingId,booking.lectureSeries)}>
                   Enroll
                 </Button>
               ) : (

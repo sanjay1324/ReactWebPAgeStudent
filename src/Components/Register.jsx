@@ -32,6 +32,8 @@ function Copyright(props) {
   );
 }
 
+
+
 const defaultTheme = createTheme();
 
 export default function SignUp() {
@@ -101,6 +103,7 @@ export default function SignUp() {
         // Handle the response from the API (registration response)
         console.log('Registration response:', data);
         // Redirect or perform other actions as needed
+        navigate('/login');
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -253,6 +256,8 @@ export default function SignUp() {
                 >
                   <MenuItem value="Student">Student</MenuItem>
                   <MenuItem value="Professor">Professor</MenuItem>
+                  <MenuItem value="Admin">Admin</MenuItem>
+
                 </Select>
               </Grid>
             </Grid>

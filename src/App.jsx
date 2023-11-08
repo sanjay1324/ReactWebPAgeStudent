@@ -12,6 +12,7 @@ import VenueBookingForm from './Components/VenueBooking';
 import LectureBookingProcess from './Components/LectureBookingProcess'
 import StudentPage from './Pages/StudentPage';
 import ChangePassword from './Components/Password';
+import StudentDashboard from './Components/StudentDashboard'
 function App() {
   return (
     <Router>
@@ -22,6 +23,8 @@ function App() {
           <Route path="/Courses" element={<Crud />} />
           <Route path="/Password" element={<ChangePassword/>} />
           <Route path='/StudentPage/*' element = {<StudentPage/>}/>
+          <Route path="/StudentDashboard" element={<StudentDashboard />} />
+
           <Route path="/Register" element={<Register />} />
           <Route path="/Topic" element={<Topic />} />
           <Route path="/Venue" element={<Venues />} />

@@ -8,7 +8,7 @@ import Col from 'react-bootstrap/Col';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 import axios from 'axios';
-
+import Nav from './NavBar'
 const Crud = () => {
     const [data, setData] = useState([]);
     const [show, setShow] = useState(false);
@@ -168,6 +168,7 @@ const Crud = () => {
 
     return (
         <Fragment>
+            <Nav/>
             <ToastContainer />
             <Container>
                 <Row>

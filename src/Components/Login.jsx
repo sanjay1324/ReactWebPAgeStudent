@@ -45,7 +45,7 @@ function Login() {
           const token = decodeToken(data.token);
           localStorage.setItem('token', token);
           toast.success('Welcome Admin');
-          navigate('/Crud');
+          navigate('/Courses');
         } else if (role === 'Student') {
           const token = decodeToken(data.token);
           localStorage.setItem('token', token);

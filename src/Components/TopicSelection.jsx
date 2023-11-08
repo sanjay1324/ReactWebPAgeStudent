@@ -60,17 +60,19 @@ function TopicSelection({ onSelectTopic }) {
 
   return (
     <Box p={2}>
-      <Paper elevation={3}>
+      <Paper elevation={3} style={{ padding: '16px' }}>
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <Typography variant="h6">
-                Select a Topic</Typography>
+              Select a Topic
+            </Typography>
           </Grid>
           <Grid item xs={4}>
             <Select
               value={selectedTopic}
               onChange={(e) => setSelectedTopic(e.target.value)}
               fullWidth
+              style={{ width: '100%' }}
             >
               <MenuItem value="">
                 <em>Select a topic</em>
@@ -88,8 +90,9 @@ function TopicSelection({ onSelectTopic }) {
               color="primary"
               onClick={handleTopicSelect}
               fullWidth
+              style={{ width: '100%' }}
             >
-              Next
+              Select Topic
             </Button>
           </Grid>
         </Grid>
