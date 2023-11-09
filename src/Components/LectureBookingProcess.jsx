@@ -1,36 +1,50 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { List, ListItem, ListItemText, Button, Paper, Container, Typography } from '@mui/material';
+import {
+  Container,
+  Paper,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Button,
+  Snackbar,
+} from '@mui/material';
 import  Navbar  from './NavBar';
 import { ToastContainer, toast } from 'react-toastify';
+import axiosInstance from './AxiosInstance';
+import Pagination from '@mui/material/Pagination';
 
 function LectureBookingProcess() {
   const [venueBookings, setVenueBookings] = useState([]);
   const [enrollmentStatus, setEnrollmentStatus] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
 
   // Fetch all venue bookings from the server
   useEffect(() => {
    
 
-    axios.get('https://localhost:7003/api/VenueBookingProcesses')
+    axiosInstance.get('VenueBookingProcesses')
       .then((response) => {
         const updatedVenueBookings = response.data.map(async (booking) => {
           const topicId = booking.topicId;
           const venueId = booking.venueId;
           const lectureSeries = booking.lectureSeries;
           // Fetch TopicName
-          const topicResponse = await axios.get(`https://localhost:7003/api/Topics/${topicId}`);
+          const topicResponse = await axiosInstance.get(`Topics/${topicId}`);
           const topicName = topicResponse.data.topicName || 'N/A';
           const semesterNo = topicResponse.data.semesterNo || 'N/A';
 
           // Fetch CourseName
           const courseId = topicResponse.data.courseId;
-          const courseResponse = await axios.get(`https://localhost:7003/api/Course/${courseId}`);
+          const courseResponse = await axiosInstance.get(`Course/${courseId}`);
           const courseName = courseResponse.data.courseName || 'N/A';
 
 
-          const venueResponse = await axios.get(`https://localhost:7003/api/Venues/${venueId}`);
+          const venueResponse = await axiosInstance.get(`Venues/${venueId}`);
           const venueName = venueResponse.data.venueName || 'N/A';
           return {
             ...booking,
@@ -53,7 +67,7 @@ function LectureBookingProcess() {
   }, []);
 
   const checkEnrollmentStatus = (username, courseId) => {
-    return axios.get(`https://localhost:7003/api/UserEnrollment?username=${username}&courseId=${courseId}`)
+    return axiosInstance.get(`UserEnrollment?username=${username}&courseId=${courseId}`)
       .then((response) => {
         return response.data.isEnrolled;
       })
@@ -65,8 +79,8 @@ function LectureBookingProcess() {
   
 
   const getNextExpectedLecture = (username, venueBookingId,lectureSeries) => {
-    return axios
-      .get(`https://localhost:7003/api/Attendance/LastAttendedLectureSeries?username=${username}&venueBookingId=${venueBookingId}`)
+    return axiosInstance
+      .get(`Attendance/LastAttendedLectureSeries?username=${username}&venueBookingId=${venueBookingId}`)
       .then((response) => {
         const expectedLecture = response.data;
         console.log(expectedLecture)
@@ -86,7 +100,18 @@ function LectureBookingProcess() {
       });
   };
   
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 5; 
 
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  // Paginate the list of venue bookings
+  const paginatedVenueBookings = venueBookings.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage
+  );
 
 const handleEnroll = async (venueBookingId,lectureSeries) => {
   const username = localStorage.getItem('username');
@@ -103,13 +128,13 @@ const handleEnroll = async (venueBookingId,lectureSeries) => {
   try {
       // Check enrollment status
       const isEnrolled = await checkEnrollmentStatus(username, courseId);
-      if (isEnrolled) {
+      if (!isEnrolled) {
           // Check the next expected lecture
           const nextExpectedLecture = await getNextExpectedLecture(username, venueBookingId,lectureSeries);
           console.log(nextExpectedLecture)
           if (nextExpectedLecture) {
               // If both conditions pass, make the POST request
-              await axios.post('https://localhost:7003/api/LectureEnrollments', lectureEnrollmentData);
+              await axiosInstance.post('LectureEnrollments', lectureEnrollmentData);
               // Enrollment successful
               setEnrollmentStatus(true);
           } else {
@@ -124,39 +149,80 @@ const handleEnroll = async (venueBookingId,lectureSeries) => {
 };
 
 
-  return (
-    <Container maxWidth="md">
+return (
+  <Container maxWidth="md">
+    <Navbar/>
     <ToastContainer/>
-      <Navbar />
+    <Paper elevation={3}>
+      <Typography variant="h4" align="center" gutterBottom>
+        Lecture Booking Process
+      </Typography>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Venue</TableCell>
+              <TableCell>Date</TableCell>
+              <TableCell>Course</TableCell>
+              <TableCell>Topic</TableCell>
+              <TableCell>Professor Name</TableCell>
+              <TableCell>Semester</TableCell>
+              <TableCell>Lecture No</TableCell>
+              <TableCell>Enroll</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {paginatedVenueBookings.map((booking) => (
+              <TableRow key={booking.venueBookingId}>
+                <TableCell>{booking.venueName}</TableCell>
+                <TableCell>{booking.bookingDate}</TableCell>
+                <TableCell>{booking.courseName}</TableCell>
+                <TableCell>{booking.topicName}</TableCell>
+                <TableCell>{booking.userName}</TableCell>
+                <TableCell>{booking.semesterNo}</TableCell>
+                <TableCell>{booking.lectureSeries}</TableCell>
+                <TableCell>
+                  {process.env.NODE_ENV !== 'test' && !enrollmentStatus ? (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => {
+                        handleEnroll(booking.venueBookingId, booking.lectureSeries);
+                        setOpenSnackbar(true);
+                      }}
+                    >
+                      Enroll
+                    </Button>
+                  ) : (
+                    <span>Enrolled</span>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Paper>
 
-      <Paper elevation={3}>
-        <Typography variant="h4" align="center" gutterBottom>
-          Lecture Booking Process
-        </Typography>
-        <List>
-          {venueBookings.map((booking) => (
-            <ListItem key={booking.venueBookingId}>
-              <ListItemText primary={`Venue: ${booking.venueName}`} />
-              <ListItemText primary={`Date: ${booking.bookingDate}`} />
-              <ListItemText primary={`Course: ${booking.courseName}`} />
-              <ListItemText primary={`Topic: ${booking.topicName}`} />
-              <ListItemText primary={`Professor Name: ${booking.userName}`} />
-              <ListItemText primary={`Semester: ${booking.semesterNo}`} />
-              <ListItemText primary={`Lecture No: ${booking.lectureSeries}`} />
+    <Snackbar
+      open={openSnackbar}
+      autoHideDuration={3000}
+      onClose={() => setOpenSnackbar(false)}
+      message="Enrollment successful!"
+    />
+    <Pagination
+      count={Math.ceil(venueBookings.length / itemsPerPage)}
+      page={page}
+      onChange={handlePageChange}
+      color="primary"
+      size="large"
+      style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}
+    />
+  </Container>
+);
 
-              {!enrollmentStatus ? (
-                <Button variant="contained" color="primary" onClick={() => handleEnroll(booking.venueBookingId,booking.lectureSeries)}>
-                  Enroll
-                </Button>
-              ) : (
-                <span>Enrolled</span>
-              )}
-            </ListItem>
-          ))}
-        </List>
-      </Paper>
-    </Container>
-  );
+
+
 }
 
 export default LectureBookingProcess;

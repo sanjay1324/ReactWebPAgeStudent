@@ -7,7 +7,13 @@ const Header = ({ onSearchChange, disabled }) => {
 
     const handleSignOut = () => {
         localStorage.removeItem('username');
-        navigate('/login');
+        localStorage.removeItem('token');
+        localStorage.removeItem('userid');
+        localStorage.removeItem('role');
+
+
+
+        navigate('/');
     };
 
     const userRole = localStorage.getItem('role');
@@ -65,7 +71,7 @@ const Header = ({ onSearchChange, disabled }) => {
                         <div className="shop15professordashboard">Professor Dashboard</div>
                     </Link>
                     <Link to="/VenueBookingProcess">
-                    <div className="shop15professordashboard">Professor Dashboard</div>
+                    <div className="shop15professordashboard">VenueBookingProcess</div>
                 </Link>
                 </>
 

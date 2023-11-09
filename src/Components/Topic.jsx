@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
+import axiosInstance from './AxiosInstance';
 import Nav from './NavBar'
 
 const Topics = () => {
@@ -47,8 +47,8 @@ const Topics = () => {
   }, []);
 
   const getData = () => {
-    axios
-      .get('https://localhost:7003/api/Topics')
+    axiosInstance
+      .get('Topics')
       .then((result) => {
         setData(result.data);
         console.log(result.data)
@@ -59,8 +59,8 @@ const Topics = () => {
   };
 
   const fetchCourseList = () => {
-    axios
-      .get('https://localhost:7003/api/Course')
+    axiosInstance
+      .get('Course')
       .then((result) => {
         setCourseList(result.data);
       })
@@ -74,7 +74,7 @@ const Topics = () => {
 
   const handleEdit = (topicId) => {
     handleShow();
-    axios.get(`https://localhost:7003/api/Topics/${topicId}`).then((result) => {
+    axiosInstance.get(`Topics/${topicId}`).then((result) => {
       setEditName(result.data.topicName);
       setEditCourseName(result.data.course ? result.data.course.courseName : '');
       setEditDuration(result.data.topicDuration);
@@ -87,7 +87,7 @@ const Topics = () => {
 
   // const handleEdit = (topicId) => {
   //   handleShow();
-  //   axios.get(`https://localhost:7003/api/Topics/${topicId}`).then((result) => {
+  //   axiosInstance.get(`Topics/${topicId}`).then((result) => {
   //     setEditName(result.data.topicName);
   //     setEditDuration(result.data.topicDuration);
   //     setEditDescription(result.data.topicDescription);
@@ -98,7 +98,7 @@ const Topics = () => {
   //     // Check if a course is associated with the topic
   //     if (result.data.course) {
   //       // If a course is associated, fetch the course name
-  //       axios.get(`https://localhost:7003/api/Course/GetCourseNameById/${result.data.course.courseId}`)
+  //       axiosInstance.get(`Course/GetCourseNameById/${result.data.course.courseId}`)
   //         .then((courseNameResult) => {
   //           setCourseName(courseNameResult.data); // Set the course name
   //         })
@@ -116,8 +116,8 @@ const Topics = () => {
 
   const handleDelete = (topicId) => {
     if (window.confirm('Are you sure you want to delete?')) {
-      axios
-        .delete(`https://localhost:7003/api/Topics/${topicId}`)
+      axiosInstance
+        .delete(`Topics/${topicId}`)
         .then((response) => {
           if (response.status === 200) {
             toast.success('Topic Has Been Deleted Successfully');
@@ -131,7 +131,7 @@ const Topics = () => {
   };
 
   const handleUpdate = () => {
-    const url = `https://localhost:7003/api/Topics/${editId}`;
+    const url = `Topics/${editId}`;
 
     // Find the selected course from the list and get its courseId
     const selectedCourse = courseList.find((course) => course.courseName === editCourseName);
@@ -146,7 +146,7 @@ const Topics = () => {
       noOfLectures: parseInt(editNoOfLectures),
     };
 
-    axios
+    axiosInstance
       .put(url, updatedData, {
         headers: {
           'Content-Type': 'application/json',
@@ -169,7 +169,7 @@ const Topics = () => {
     // Find the selected course from the list and get its courseId
     const selectedCourse = courseList.find((course) => course.courseName === courseName);
 
-    const url = `https://localhost:7003/api/Topics`;
+    const url = `Topics`;
     const newData = {
       topicName: topicName,
       courseId: selectedCourse ? selectedCourse.courseId : null, // Set the correct courseId
@@ -179,7 +179,7 @@ const Topics = () => {
       noOfLectures: parseInt(noOfLectures),
     };
 
-    axios
+    axiosInstance
       .post(url, newData, {
         headers: {
           'Content-Type': 'application/json',
@@ -198,8 +198,8 @@ const Topics = () => {
 
   const getCourseNameByCourseId = (courseId) => {
     // Make an API call to fetch the course name
-    axios
-      .get(`https://localhost:7003/api/Topics/GetCourseNameById/${courseId}`)
+    axiosInstance
+      .get(`Topics/GetCourseNameById/${courseId}`)
       .then((result) => {
         // Handle the successful response
         const courseName = result.data;

@@ -13,8 +13,7 @@ import {
     Button,
 } from '@mui/material';
 import Pagination from '@mui/material/Pagination';
-
-import axios from 'axios';
+import axiosInstance from './AxiosInstance';
 import Navbar from './NavBar';
 import { ToastContainer, toast } from 'react-toastify';
 const CourseList = () => {
@@ -30,8 +29,8 @@ const CourseList = () => {
     }, []);
 
     const fetchCourses = () => {
-        axios
-            .get('https://localhost:7003/api/Course')
+        axiosInstance
+            .get('Course')
             .then((response) => {
                 setCourses(response.data);
             })
@@ -51,7 +50,7 @@ const CourseList = () => {
     const isStudentAlreadyEnrolled = async (userName, courseId) => {
         try {
             // Make an API request to check if the student is already enrolled in the course
-            const response = await axios.get(`https://localhost:7003/api/EnrollmentProcesses?userName=${userName}&courseId=${courseId}`);
+            const response = await axiosInstance.get(`EnrollmentProcesses?userName=${userName}&courseId=${courseId}`);
             
             // If there is any enrollment data for this student and course, they are already enrolled
             return response.data.length > 0;
@@ -90,8 +89,8 @@ const CourseList = () => {
                 enrollmentCount: 1,
             };
     
-            axios
-                .post('https://localhost:7003/api/EnrollmentProcesses', newEnrollment)
+            axiosInstance
+                .post('EnrollmentProcesses', newEnrollment)
                 .then(() => {
                     setIsEnrolled(true);
                     toast.success('Enrollment successful!');
@@ -105,7 +104,7 @@ const CourseList = () => {
                         }
                     } else {
                         // If no response data is available, display a generic error message
-                        toast.error('Error enrolling in the course.');
+                        console.error('Error enrolling in the course.');
                     }
                 })
         } else {
@@ -121,7 +120,7 @@ const CourseList = () => {
             },
         },
     });
-    const [currentPage, setCurrentPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
     const coursesPerPage = 5;
     const totalPages = Math.ceil(courses.length / coursesPerPage);
 
@@ -138,7 +137,7 @@ const CourseList = () => {
             <Navbar />
             <div style={containerStyles}>
                 <div>
-                    <h1>Course List</h1>
+                    <h1 style={{ color: 'green'}}>Course List</h1>
                     <TableContainer component={Paper} style={{ width: '1000px', overflowX: 'auto' }}>
                         <Table style={{ width: '100%' }}>
                             <TableHead>
@@ -187,17 +186,22 @@ const CourseList = () => {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                    <Pagination
-                        count={totalPages}
-                        page={currentPage}
-                        onChange={handlePageChange}
-                        color="primary"
-                        size="large"
-                        showFirstButton
-                        showLastButton
-                    />
+                    
                 </div>
+                
             </div>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+  <Pagination
+    count={totalPages}
+    page={currentPage}
+    onChange={handlePageChange}
+    color="primary"
+    size="large"
+    showFirstButton
+    showLastButton
+  />
+</div>
+
         </ThemeProvider>
     );
 };

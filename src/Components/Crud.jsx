@@ -6,9 +6,11 @@ import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'
-import axios from 'axios';
-import Nav from './NavBar'
+import 'react-toastify/dist/ReactToastify.css';
+import Nav from './NavBar';
+import axiosInstance from "./AxiosInstance";
+import './Crud.css'; // Import your custom CSS for styling
+
 const Crud = () => {
     const [data, setData] = useState([]);
     const [show, setShow] = useState(false);
@@ -30,70 +32,39 @@ const Crud = () => {
         getData();
     }, []);
 
-    axios.interceptors.response.use(
-        (response) => response,
-        (error) => {
-          if (error.response.status === 401) {
-            // Unauthorized access, show a message and provide a login button
-            // You can customize the error message and login redirection as needed
-            const errorMessage = "You are restricted to view this page.";
-            const loginButton = (
-              <button
-                className="btn btn-primary"
-                onClick={() => {
-                  // Redirect to your login page
-                  window.location.href = '/login'; // Update the URL as needed
-                }}
-              >
-                Login
-              </button>
-            );
-      
-            // Display the message and login button using a toast or any other method
-            toast.error(<div>{errorMessage}{loginButton}</div>, {
-              autoClose: false, // Prevent auto-close for user interaction
-            });
-          }
-          return Promise.reject(error);
-        }
-      );
     const getData = () => {
-        axios
-            .get('https://localhost:7003/api/Course')
+        axiosInstance
+            .get('Course')
             .then((result) => {
                 setData(result.data);
-                console.log(result.data)
+                console.log(result.data);
             })
             .catch((error) => {
                 console.log("An error occurred while fetching data:", error);
             });
-    }
+    };
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
     const handleEdit = (courseId) => {
-
         handleShow();
-        axios.get(`https://localhost:7003/api/Course/${courseId}`).
-            then((result) => {
+        axiosInstance.get(`Course/${courseId}`)
+            .then((result) => {
                 setEditName(result.data.courseName);
                 setEditDurationOfCourse(result.data.durationOfCourse);
                 setEditAmount(result.data.amountForCourse);
                 setEditSemester(result.data.noOfSemester);
                 setEditDescription(result.data.courseDescription);
                 setEditId(courseId);
-
-            })
-
-    }
+            });
+    };
 
     const handleDelete = (courseId) => {
         if (window.confirm("Are you sure you want to delete?")) {
-            axios.delete(`https://localhost:7003/api/Course/${courseId}`)
+            axiosInstance.delete(`Course/${courseId}`)
                 .then((response) => {
                     if (response.status === 200) {
-                        
                         toast.success('Course Has Been Deleted Successfully');
                         getData();
                     }
@@ -102,54 +73,49 @@ const Crud = () => {
                     toast.error('An error occurred while deleting the course:', error);
                 });
         }
-    }
+    };
 
-
-    const handleUpdate = () => {    
-        const url=`https://localhost:7003/api/Course/${editId}`
+    const handleUpdate = () => {
+        const url = `Course/${editId}`;
         const data = {
-            "courseId":editId,
+            "courseId": editId,
             "courseName": editName,
             "durationOfCourse": editDurationOfCourse,
             "amountForCourse": editAmount,
             "noOfSemester": editSemester,
-            "courseDescription": editDescription
-        }
+            "courseDescription": editDescription,
+        };
 
-        axios.put(url, data).then((result) => {
+        axiosInstance.put(url, data).then((result) => {
             handleClose();
             getData();
             clear();
-            toast.success('Course Has been Updated Successfully')
+            toast.success('Course Has been Updated Successfully');
         }).catch((error) => {
             toast.error(error);
         });
 
-
         handleClose();
-    }
+    };
 
     const handleSave = () => {
-        const url = 'https://localhost:7003/api/Course'
+        const url = 'Course';
         const data = {
             "courseName": courseName,
             "durationOfCourse": durationOfCourse,
             "amountForCourse": amountForCourse,
             "noOfSemester": noOfSemester,
-            "courseDescription": courseDescription
-        }
+            "courseDescription": courseDescription,
+        };
 
-        axios.post(url, data).then((result) => {
+        axiosInstance.post(url, data).then((result) => {
             getData();
             clear();
-            toast.success('Course Added Successfully')
+            toast.success('Course Added Successfully');
         }).catch((error) => {
             toast.error(error);
         });
-    }
-
-    
-      
+    };
 
     const clear = () => {
         setCourseName('');
@@ -164,11 +130,12 @@ const Crud = () => {
         setEditSemester('');
         setEditDescription('');
         setEditId('');
-    }
+    };
 
     return (
-        <Fragment>
-            <Nav/>
+        <div className="sanjay">
+        <Fragment >
+            <Nav />
             <ToastContainer />
             <Container>
                 <Row>
@@ -334,6 +301,7 @@ const Crud = () => {
                 </Modal.Footer>
             </Modal>
         </Fragment>
+        </div>
     );
 }
 

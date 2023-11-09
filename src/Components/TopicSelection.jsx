@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from './AxiosInstance';
 import {
   Typography,
   Select,
@@ -17,7 +17,7 @@ function TopicSelection({ onSelectTopic }) {
 
   const fetchCourseName = async (courseId) => {
     try {
-      const response = await axios.get(`https://localhost:7003/api/Course/${courseId}`);
+      const response = await axiosInstance.get(`Course/${courseId}`);
       return response.data.courseName;
     } catch (error) {
       console.error('Error fetching course name:', error);
@@ -26,8 +26,8 @@ function TopicSelection({ onSelectTopic }) {
   };
 
   useEffect(() => {
-    axios
-      .get('https://localhost:7003/api/Topics')
+    axiosInstance
+      .get('Topics')
       .then((response) => {
         setTopics(response.data);
       })
@@ -38,8 +38,8 @@ function TopicSelection({ onSelectTopic }) {
 
   useEffect(() => {
     if (selectedTopic) {
-      axios
-        .get(`https://localhost:7003/api/Topics/${selectedTopic}`)
+      axiosInstance
+        .get(`Topics/${selectedTopic}`)
         .then(async (response) => {
           const topicDetails = response.data;
           const courseName = await fetchCourseName(topicDetails.courseId);

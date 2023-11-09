@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
+import axiosInstance from './AxiosInstance';
 import Header from './NavBar'
 
 const Venues = () => {
@@ -36,8 +36,8 @@ const Venues = () => {
   }, []);
 
   const getData = () => {
-    axios
-      .get('https://localhost:7003/api/Venues')
+    axiosInstance
+      .get('Venues')
       .then((result) => {
         setData(result.data);
       })
@@ -51,7 +51,7 @@ const Venues = () => {
 
   const handleEdit = (venueId) => {
     handleShow();
-    axios.get(`https://localhost:7003/api/Venues/${venueId}`).then((result) => {
+    axiosInstance.get(`Venues/${venueId}`).then((result) => {
       setEditName(result.data.venueName);
       setEditCapacity(result.data.venueCapacity);
       setEditLocation(result.data.venueLocation);
@@ -61,8 +61,8 @@ const Venues = () => {
 
   const handleDelete = (venueId) => {
     if (window.confirm('Are you sure you want to delete?')) {
-      axios
-        .delete(`https://localhost:7003/api/Venues/${venueId}`)
+      axiosInstance
+        .delete(`Venues/${venueId}`)
         .then((response) => {
           if (response.status === 200) {
             toast.success('Venue Has Been Deleted Successfully');
@@ -76,7 +76,7 @@ const Venues = () => {
   };
 
   const handleUpdate = () => {
-    const url = `https://localhost:7003/api/Venues/${editId}`;
+    const url = `Venues/${editId}`;
     const updatedData = {
       venueId: editId,
       venueName: editName,
@@ -84,7 +84,7 @@ const Venues = () => {
       venueLocation: editLocation,
     };
 
-    axios
+    axiosInstance
       .put(url, updatedData, {
         headers: {
           'Content-Type': 'application/json',
@@ -104,14 +104,14 @@ const Venues = () => {
   };
 
   const handleSave = () => {
-    const url = `https://localhost:7003/api/Venues`;
+    const url = `Venues`;
     const newData = {
       venueName: venueName,
       venueCapacity: venueCapacity,
       venueLocation: venueLocation,
     };
 
-    axios
+    axiosInstance
       .post(url, newData, {
         headers: {
           'Content-Type': 'application/json',

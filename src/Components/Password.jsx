@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios"; // Import Axios or your preferred HTTP library
+import axiosInstance from "./AxiosInstance";
+import Paper from '@mui/material/Paper';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 
 const ChangePassword = () => {
   const [formData, setFormData] = useState({
@@ -38,7 +41,7 @@ const ChangePassword = () => {
       };
 
       // Send the API request
-      axios
+      axiosInstance
         .post("https://localhost:7003/api/Authorization/ChangePassword", requestPayload)
         .then((response) => {
           // Handle the API response, e.g., show a success message
@@ -52,63 +55,67 @@ const ChangePassword = () => {
   };
 
   return (
-    <div className="row g-0 auth-wrapper">
-      {/* Your existing UI code goes here */}
+    <Paper elevation={3} className="auth-wrapper">
       <form className="auth-form" method="POST" onSubmit={changePassword} autoComplete={'off'}>
         {/* Username */}
-        <div className="username mb-3">
-          <input
-            type="text"
-            name="username"
-            className="form-control"
-            value={formData.username}
-            placeholder="Username"
-            onChange={handleInputChange}
-          />
-        </div>
+        <TextField
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          label="Username"
+          name="username"
+          value={formData.username}
+          onChange={handleInputChange}
+        />
 
         {/* Current Password */}
-        <div className="current-password mb-3">
-          <input
-            type="password"
-            name="currentPassword"
-            className="form-control"
-            value={formData.currentPassword}
-            placeholder="Current Password"
-            onChange={handleInputChange}
-          />
-        </div>
+        <TextField
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          type="password"
+          label="Current Password"
+          name="currentPassword"
+          value={formData.currentPassword}
+          onChange={handleInputChange}
+        />
 
         {/* New Password */}
-        <div className="new-password mb-3">
-          <input
-            type="password"
-            name="newPassword"
-            className="form-control"
-            value={formData.newPassword}
-            placeholder="New Password"
-            onChange={handleInputChange}
-          />
-        </div>
+        <TextField
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          type="password"
+          label="New Password"
+          name="newPassword"
+          value={formData.newPassword}
+          onChange={handleInputChange}
+        />
 
         {/* Confirm Password */}
-        <div className="confirm-password mb-3">
-          <input
-            type="password"
-            name="confirmPassword"
-            className="form-control"
-            value={formData.confirmPassword}
-            placeholder="Confirm Password"
-            onChange={handleInputChange}
-          />
-        </div>
+        <TextField
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          type="password"
+          label="Confirm Password"
+          name="confirmPassword"
+          value={formData.confirmPassword}
+          onChange={handleInputChange}
+        />
 
         <div className="text-center">
-          <button type="submit" className="btn btn-primary w-100 theme-btn mx-auto">Change Password</button>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            className="theme-btn"
+          >
+            Change Password
+          </Button>
         </div>
       </form>
-      {/* Rest of your UI code */}
-    </div>
+    </Paper>
   );
 };
 

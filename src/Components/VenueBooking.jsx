@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import TopicSelection from './TopicSelection';
-import axios from 'axios';
+import axiosInstance from './AxiosInstance';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Nav from './NavBar'
@@ -83,7 +83,7 @@ const combinedBookingDate = new Date(year, month, day, hours, minutes);
 
     console.log(bookingDetails.bookingDate)
     try {
-      await axios.post('https://localhost:7003/api/VenueBookingProcesses', bookingDetails);
+      await axiosInstance.post('VenueBookingProcesses', bookingDetails);
       console.log(bookingDetails)
       setBookingConfirmed(true);
       toast.success('Booking confirmed! You can view your bookings in your profile.');
@@ -95,7 +95,7 @@ const combinedBookingDate = new Date(year, month, day, hours, minutes);
 
   // Fetch the list of venues from the API
   useEffect(() => {
-    axios.get('https://localhost:7003/api/Venues')
+    axiosInstance.get('Venues')
       .then((response) => {
         setVenues(response.data);
       })
@@ -104,7 +104,7 @@ const combinedBookingDate = new Date(year, month, day, hours, minutes);
         console.error('Error fetching venues:', error);
       });
 
-    axios.get('https://localhost:7003/api/Topics')
+    axiosInstance.get('Topics')
       .then((response) => {
         setTopics(response.data);
       })
