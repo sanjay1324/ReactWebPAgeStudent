@@ -13,7 +13,6 @@ const ChangePassword = () => {
     confirmPassword: "",
   });
 
-  const [validate, setValidate] = useState({});
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

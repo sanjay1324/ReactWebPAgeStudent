@@ -45,7 +45,7 @@ function VenueBookingForm() {
       return;
     }
 
-    
+
 
     // Combine the selected date and time
     if (!bookingDateOnly || !bookingTimeOnly) {
@@ -54,16 +54,16 @@ function VenueBookingForm() {
     }
 
     const dateComponents = bookingDateOnly.split('-'); // Split date into [year, month, day]
-const timeComponents = bookingTimeOnly.split(':'); // Split time into [hours, minutes]
+    const timeComponents = bookingTimeOnly.split(':'); // Split time into [hours, minutes]
 
-const year = parseInt(dateComponents[0]);
-const month = parseInt(dateComponents[1]) - 1; // Months are zero-based
-const day = parseInt(dateComponents[2]);
+    const year = parseInt(dateComponents[0]);
+    const month = parseInt(dateComponents[1]) - 1; // Months are zero-based
+    const day = parseInt(dateComponents[2]);
 
-const hours = parseInt(timeComponents[0]);
-const minutes = parseInt(timeComponents[1]);
-    
-const combinedBookingDate = new Date(year, month, day, hours, minutes);
+    const hours = parseInt(timeComponents[0]);
+    const minutes = parseInt(timeComponents[1]);
+
+    const combinedBookingDate = new Date(year, month, day, hours, minutes);
 
     console.log(combinedBookingDate)
     if (combinedBookingDate <= new Date()) {

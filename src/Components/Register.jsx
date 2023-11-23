@@ -69,7 +69,7 @@ export default function SignUp() {
 
   const handleLoginClick = () => {
     // Use the `navigate` function to redirect to the login page
-    navigate('/login');
+    navigate('/');
   };
 
   const handleSubmit = (event) => {
@@ -103,7 +103,7 @@ export default function SignUp() {
         // Handle the response from the API (registration response)
         console.log('Registration response:', data);
         // Redirect or perform other actions as needed
-        navigate('/login');
+        navigate('/');
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -272,7 +272,7 @@ export default function SignUp() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link to="/login" variant="body2" onClick={handleLoginClick}>
+                <Link to="/" variant="body2" onClick={handleLoginClick}>
                   Already have an account? Sign in
                 </Link>
               </Grid>
